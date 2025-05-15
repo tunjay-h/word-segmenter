@@ -9,7 +9,7 @@ from pydantic import BaseModel, ValidationError
 
 # Configuration
 BATCH_SIZE = int(os.getenv("BATCH_SIZE", 10))
-INPUT_FILE = os.getenv("INPUT_FILE", "ocr_output.txt")
+INPUT_FILE = os.getenv("INPUT_FILE", "words.txt")
 DB_FILE = os.getenv("DB_FILE", "morphology_detailed.db")
 ERROR_LOG = os.getenv("ERROR_LOG", "morphology_errors.jsonl")
 API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyChHQCcMkc1KBuEoPIH3YHGz6_wXddk2wI")
@@ -70,7 +70,7 @@ async def segment_batch(words, model):
         ],
         "usage": "<Ümumi|Terminologiya>",
         "field": "<string> (only if usage is Terminologiya)",
-        "etymology": "<string> (optional)",
+        "etymology": "<string> (etymology note)",
         "gloss": "<string> (English gloss)",
         "features": {
           "Number": "<Sing|Plur>",
@@ -183,23 +183,25 @@ async def main():
         batch = words[i : i + BATCH_SIZE]
         print(f"Processing words {i+1} to {min(i+BATCH_SIZE, total)} of {total}")
         results = await segment_batch(batch, model)
-        for obj in results:
-            print(obj["word"], "->", obj["pos"], obj["gloss"])
-            segments_json = json.dumps(obj["segments"], ensure_ascii=False)
-            features_json = (
-                json.dumps(obj.get("features", {}), ensure_ascii=False)
-                if obj.get("features")
-                else None
-            )
-            cursor.execute(
-                "INSERT OR IGNORE INTO morphology(word,pos,type,segments,usage,field,etymology,gloss,features,definition) "
-                "VALUES(?,?,?,?,?,?,?,?,?,?)",
-                (
-                    obj["word"], obj["pos"], obj["type"], segments_json,
-                    obj["usage"], obj.get("field"), obj.get("etymology"),
-                    obj.get("gloss"), features_json, obj.get("definition")
-                ),
-            )
+        with open("result.jsonl", "a", encoding="utf-8") as result_file:
+            for obj in results:
+                # Write to JSONL
+                result_file.write(json.dumps(obj, ensure_ascii=False) + "\n")
+                segments_json = json.dumps(obj["segments"], ensure_ascii=False)
+                features_json = (
+                    json.dumps(obj.get("features", {}), ensure_ascii=False)
+                    if obj.get("features")
+                    else None
+                )
+                cursor.execute(
+                    "INSERT OR IGNORE INTO morphology(word,pos,type,segments,usage,field,etymology,gloss,features,definition) "
+                    "VALUES(?,?,?,?,?,?,?,?,?,?)",
+                    (
+                        obj["word"], obj["pos"], obj["type"], segments_json,
+                        obj["usage"], obj.get("field"), obj.get("etymology"),
+                        obj.get("gloss"), features_json, obj.get("definition")
+                    ),
+                )
         # Update progress
         cursor.execute("UPDATE progress SET batch_index = ? WHERE id=1", (i + BATCH_SIZE,))
         conn.commit()
