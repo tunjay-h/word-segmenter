@@ -1,10 +1,12 @@
 import asyncio
 from fastapi import FastAPI, HTTPException, Header, UploadFile, File
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any, Union
 from morphology_core import analyze_word, analyze_words
 
 app = FastAPI(title="Azerbaijani Morphology API", description="LLM-powered morphological analysis for Azerbaijani words. All endpoints require an api_key header with your Gemini API key.")
+app.mount("/static", StaticFiles(directory="static", html=True), name="static")
 
 class SingleWordRequest(BaseModel):
     word: str

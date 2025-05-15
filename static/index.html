@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azerbaijani Morphology Web UI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🧬 Azerbaijani Morphology Analyzer</h1>
+        <div class="tab-bar">
+            <button type="button" id="tab-single" class="tab active">Single</button>
+            <button type="button" id="tab-batch" class="tab">Batch</button>
+            <button type="button" id="tab-file" class="tab">File Upload</button>
+        </div>
+        <form id="analyze-form">
+            <label for="api-key">Gemini API Key</label>
+            <input type="password" id="api-key" placeholder="Paste your Gemini API key here" required>
+            <div id="single-input">
+                <label for="word">Word</label>
+                <input type="text" id="word" placeholder="Type an Azerbaijani word">
+            </div>
+            <div id="batch-input" style="display:none;">
+                <label for="words">Words (one per line)</label>
+                <textarea id="words" rows="5" placeholder="Enter words, one per line"></textarea>
+            </div>
+            <div id="file-input" style="display:none;">
+                <label for="file">Upload .txt File</label>
+                <input type="file" id="file" accept=".txt">
+            </div>
+            <button type="submit">Analyze</button>
+        </form>
+        <div id="output"></div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
