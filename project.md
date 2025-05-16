@@ -20,24 +20,23 @@ Standard library: `json`, `re`, `asyncio`, `sqlite3`.
 
 1. **Clone repository**
    ```powershell
-   git clone <repo_url> e:/projects/word-segmenter
-   cd e:/projects/word-segmenter
+   git clone <repo_url>
+   cd <repo_dir>
    ```
 2. **Create virtual environment**
    ```powershell
-   python -m venv .venv
-   .\.venv\Scripts\activate
+   uv sync
    ```
 3. **Install packages**
    ```powershell
-   pip install google-generativeai pydantic
+   uv add google-generativeai pydantic fastapi
    ```
 4. **Set API key**
    ```powershell
    set GEMINI_API_KEY=YOUR_GEMINI_API_KEY
    ```
 5. **Prepare input**
-   - Place each Azerbaijani word on its own line in `ocr_output.txt`.
+   - Place each Azerbaijani word on its own line in `words.txt`.
 
 
 ## morphology_detailed.py
@@ -175,6 +174,3 @@ These align with Universal Dependencies conventions, providing a solid foundatio
 - Extend support for example sentences and context-aware analysis.
 - Build a web UI or CLI for interactive lookups.
 - Export data to CoNLL-U format for UD treebank development.
-
----
-*Generated on 2025-05-15*

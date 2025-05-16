@@ -5,13 +5,15 @@ import sqlite3
 from morphology_core import analyze_words
 
 # Configuration
-
-# Configuration
 BATCH_SIZE = int(os.getenv("BATCH_SIZE", 10))
 INPUT_FILE = os.getenv("INPUT_FILE", "words.txt")
 DB_FILE = os.getenv("DB_FILE", "morphology_detailed.db")
+RESULT_FILE = os.getenv("RESULT_FILE", "result.jsonl")
 ERROR_LOG = os.getenv("ERROR_LOG", "morphology_errors.jsonl")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyChHQCcMkc1KBuEoPIH3YHGz6_wXddk2wI")
 
+if not GEMINI_API_KEY:
+    raise ValueError("Please set the GEMINI_API_KEY environment variable.")
 
 async def main():
     # Setup SQLite DB
@@ -56,17 +58,12 @@ async def main():
         words = [w.strip() for w in f if w.strip()]
     total = len(words)
 
-    # Initialize model
-    model = genai.GenerativeModel("gemini-2.5-flash-preview-04-17")
-
     # Process in batches
     for i in range(start, total, BATCH_SIZE):
-        if i >= 20:
-            break
         batch = words[i : i + BATCH_SIZE]
         print(f"Processing words {i+1} to {min(i+BATCH_SIZE, total)} of {total}")
-        results = await analyze_words(batch)
-        with open("result.jsonl", "a", encoding="utf-8") as result_file:
+        results = await analyze_words(batch, GEMINI_API_KEY)
+        with open(RESULT_FILE, "a", encoding="utf-8") as result_file:
             for obj in results:
                 # Write to JSONL
                 result_file.write(json.dumps(obj, ensure_ascii=False) + "\n")
