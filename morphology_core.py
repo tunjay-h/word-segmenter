@@ -74,7 +74,7 @@ EXAMPLE = [
 ]
 EXAMPLE_JSON = json.dumps(EXAMPLE, ensure_ascii=False)
 
-MODEL_NAME = "gemini-2.5-flash-preview-04-17"
+MODEL_NAME = "gemini-2.5-flash-preview-05-20"
 
 async def analyze_words(words: List[str], api_key: str) -> List[dict]:
     genai.configure(api_key=api_key)
