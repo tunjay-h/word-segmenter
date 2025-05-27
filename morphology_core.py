@@ -8,7 +8,7 @@ from pydantic import BaseModel, ValidationError
 
 class Segment(BaseModel):
     element: str
-    type: Literal["Kök", "Leksik Şəkilçi", "Qrammatik Şəkilçi", "Birləşdirici tire"]
+    type: Literal["Kök", "Leksik Şəkilçi", "Qrammatik Şəkilçi", "Birləşdirici"]
 
 class DetailedAnalysis(BaseModel):
     word: str
@@ -29,7 +29,7 @@ SCHEMA = '''
     "pos": "<one of: İsim,Sifət,Say,Əvəzlik,Feil,Zərf,Qoşma,Bağlayıcı,Ədat,Nida,Modal söz,Feil (Məsdər),İsim (Məsdər)>",
     "type": "<one of: Sadə,Düzəltmə,Mürəkkəb>",
     "segments": [
-      { "element": "<string>", "type": "<Kök|Leksik Şəkilçi|Qrammatik Şəkilçi|Birləşdirici tire>" },
+      { "element": "<string>", "type": "<Kök|Leksik Şəkilçi|Qrammatik Şəkilçi|Birləşdirici>" },
       ...
     ],
     "usage": "<Ümumi|Terminologiya>",
@@ -61,7 +61,7 @@ EXAMPLE = [
         "segments": [
             {"element": "abad", "type": "Kök"},
             {"element": "-lıq", "type": "Leksik Şəkilçi"},
-            {"element": "-", "type": "Birləşdirici tire"},
+            {"element": "-", "type": "Birləşdirici"},
             {"element": "qur", "type": "Kök"},
             {"element": "-ucu", "type": "Leksik Şəkilçi"},
             {"element": "-luq", "type": "Leksik Şəkilçi"}
